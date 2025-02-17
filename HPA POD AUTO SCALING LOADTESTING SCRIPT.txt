@@ -1,0 +1,1 @@
+kubectl run ab-tester --image=httpd:2.4 --restart=Never -- /bin/sh -c "ab -n 100000 -c 100 http://nginx-svc/index.html" 

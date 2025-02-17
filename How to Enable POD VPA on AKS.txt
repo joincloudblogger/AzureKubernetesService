@@ -1,0 +1,104 @@
+Step 1 
+
+How to enable VPA
+
+az aks update --name cbcluster --resource-group CB-RG01 --enable-vpa
+
+
+Step 2
+
+How to check VPA
+
+kubectl get pod -n kube-system
+
+Step3 
+
+We will create nginx file     nginx-deployment.yaml
+
+gaurav [ ~ ]$ cat nginx-deployment.yaml 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "100m"
+              memory: "128Mi"
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-svc
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP
+
+
+#Step4 We will create the VPA Autoscaler Object define CPU
+
+
+gaurav [ ~ ]$ cat vpa.nginx.yaml 
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: nginx-vpa
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind:       Deployment
+    name:       nginx-deployment
+  updatePolicy:
+    updateMode: "Auto"
+  resourcePolicy:
+    containerPolicies:
+      - containerName: '*'
+        minAllowed:
+          cpu: "50m"
+          memory: "64Mi"
+        maxAllowed:
+          cpu: "1"
+          memory: "1Gi"
+
+Step 5
+
+kubectl get svc
+kubectl get pod
+kubectl get deploy
+kubectl get svc
+kubectl get pod
+kubectl get deploy
+kubectl get vpa nginx-vpa --output yaml
+
+Load Testing Command for VPA
+kubectl run ab-tester1 --image=httpd:2.4 --restart=Never -- /bin/sh -c "ab -n 100000 -c 100 http://nginx-svc/index.html"
+
+
+kubectl get vpa -w
+watch -n 2 kubectl top pod --selector=app=nginx
+
+
