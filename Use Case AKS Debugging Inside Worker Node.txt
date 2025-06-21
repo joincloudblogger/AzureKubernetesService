@@ -1,4 +1,5 @@
 Use Case: Access the internal system of an AKS worker node for debugging (like checking logs, files, processes).
+👨‍🏫 Trainer: Gaurav Tevathiya | Cloud & Artificial Intelligence Architect
 
 
 We want to access inside an AKS (Azure Kubernetes Service) worker node to do some debugging.
@@ -72,7 +73,6 @@ The debug container is temporary — once you exit, it automatically stops and d
 
 ---
 
-Full Example for Students:
 
 ```bash
 kubectl get nodes
@@ -81,13 +81,4 @@ chroot /host
 ls /etc
 exit
 exit
-```
 
----
-
-If you want, I can also create:
-
-* A **YouTube Shorts-style script**
-* Or a **diagram/image** to explain this visually
-
-Let me know which one you'd like!
