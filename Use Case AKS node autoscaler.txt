@@ -1,0 +1,43 @@
+Use Case: AKS node autoscaler
+👨‍🏫 Trainer: Gaurav Tevathiya | Cloud & Artificial Intelligence Architect 
+
+1. You’ve set the autoscaler on your node pool with:
+
+   --min-count=1`
+   --max-count=3`
+
+2. You first create a small deployment (e.g., 10 pods):
+
+ 
+   kubectl scale --replicas=10 deployment nginx-deployment
+   
+
+3. Then suddenly scale it to 300 pods:
+
+
+   kubectl scale --replicas=300 deployment nginx-deployment
+
+
+4. You expect that AKS should automatically increase the number of nodes from 1 up to 3 to handle the load.
+
+
+
+How to Monitor If It’s Working
+
+1. Watch nodes scaling:
+
+
+kubectl get nodes -w
+```
+
+2. Watch pods scheduling:
+
+kubectl get pods -n default --watch
+```
+
+3. Check pod details if they stay pending:
+
+
+kubectl describe pod <pod-name>
+
+
