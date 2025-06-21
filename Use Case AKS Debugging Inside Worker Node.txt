@@ -15,7 +15,7 @@ kubectl get nodes
 
 Step 2: Send a debug shell to that node
 
-kubectl debug node/aks-nodepool1-12345678-vmss000000 -it --image=mcr.microsoft.com/cbl-mariner/busybox:2.0 --privileged
+kubectl debug node/aks-nodepool1-12345678-vmss000000 -it --image=mcr.microsoft.com/cbl-mariner/busybox:2.0 
 ```
 
 What this command does:
