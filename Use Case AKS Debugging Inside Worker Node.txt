@@ -1,0 +1,93 @@
+Use Case: Access the internal system of an AKS worker node for debugging (like checking logs, files, processes).
+
+
+We want to access inside an AKS (Azure Kubernetes Service) worker node to do some debugging.
+
+In AKS, you can’t SSH directly into a node (like you do in a VM), so we use a special trick — we send a debug container** that opens a small window into the node, so we can go inside.
+
+
+Step 1: Get the name of the node
+
+kubectl get nodes
+
+
+
+Step 2: Send a debug shell to that node
+
+kubectl debug node/aks-nodepool1-12345678-vmss000000 -it --image=mcr.microsoft.com/cbl-mariner/busybox:2.0 --privileged
+```
+
+What this command does:
+
+kubectl debug`: Sends a temporary debug container to the node.
+--image`: Uses a lightweight Linux image (`busybox`) to run the shell.
+--privileged`: Gives full access to the node’s system so we can explore everything.
+
+Step 3: You’re now inside the node!
+
+You’ll see a shell prompt like this:
+
+/ #
+
+
+This means you’re inside the debug container, which is running on the AKS workernode.
+
+Step 4: Go inside the real node OS
+
+```bash
+chroot /host
+```
+
+Now you are inside the actual operating system of the node — just like an SSH session.
+
+---
+
+Step 5: Do your troubleshooting
+
+Some useful commands:
+
+```bash
+ls /etc             # See configuration files  
+cat /var/log/...    # Read system logs  
+df -h               # Check disk space  
+ps aux              # See running processes  
+```
+
+
+
+Step 6: Exit safely
+
+```bash
+exit
+exit
+```
+
+First `exit`: gets you out of the chroot (real node system)
+Second `exit`: gets you out of the debug container
+
+---
+
+Important Note:
+The debug container is temporary — once you exit, it automatically stops and deletes itself. Nothing is left behind.
+
+---
+
+Full Example for Students:
+
+```bash
+kubectl get nodes
+kubectl debug node/aks-nodepool1-12345678-vmss000000 -it --image=mcr.microsoft.com/cbl-mariner/busybox:2.0 --privileged
+chroot /host
+ls /etc
+exit
+exit
+```
+
+---
+
+If you want, I can also create:
+
+* A **YouTube Shorts-style script**
+* Or a **diagram/image** to explain this visually
+
+Let me know which one you'd like!
