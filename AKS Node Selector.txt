@@ -1,0 +1,69 @@
+# Azure Kubernetes Service (AKS) – Using `nodeSelector` to Schedule Pods on Specific Nodes
+
+Use `nodeSelector` in AKS to run a Pod on a specific node (or group of nodes) that match a particular label.
+
+
+Step 1: Label the Node**
+
+First, identify the node on which you want your pod to run.
+
+kubectl get nodes
+
+
+Example output
+
+aks-nodepool1-12345678-vmss000000
+aks-nodepool1-12345678-vmss000001
+
+
+Now, add a label to the target node:
+
+
+kubectl label nodes aks-nodepool1-12345678-vmss000000 disktype=ssd
+
+
+To verify that the label has been added:
+
+
+kubectl get nodes --show-labels
+
+
+
+
+Step 2: Create a Pod YAML File with `nodeSelector`
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+  nodeSelector:
+    disktype: ssd
+
+
+This pod will only be scheduled on nodes that have the label `disktype=ssd`.
+
+
+
+Step 3: Deploy the Pod
+
+Apply the pod manifest:
+
+
+kubectl apply -f nginx-pod.yaml
+
+
+
+Step 4: Verify Pod Scheduling
+
+Check where the pod is running:
+
+
+kubectl get pod -o wide
+
+
+You’ll see the pod is scheduled on the node with the matching label.
+
