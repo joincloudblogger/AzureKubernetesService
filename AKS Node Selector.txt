@@ -3,7 +3,7 @@
 Use `nodeSelector` in AKS to run a Pod on a specific node (or group of nodes) that match a particular label.
 
 
-Step 1: Label the Node**
+Step 1: Label the Node
 
 First, identify the node on which you want your pod to run.
 
