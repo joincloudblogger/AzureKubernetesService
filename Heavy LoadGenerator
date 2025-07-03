@@ -1,0 +1,20 @@
+
+Heavy LoadGenerator File: vim heavy-load-job.yaml
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: heavy-load-generator
+spec:
+  parallelism: 5                # Ek sath 5 pods parallel chalenge
+  completions: 5                # Total 5 pods run honge
+  template:
+    spec:
+      containers:
+      - name: ab
+        image: httpd:2.4
+        command: ["/bin/sh", "-c"]
+        args:
+          - ab -n 5000000 -c 5000 http://nginx-svc/index.html
+      restartPolicy: Never
+  backoffLimit: 0
