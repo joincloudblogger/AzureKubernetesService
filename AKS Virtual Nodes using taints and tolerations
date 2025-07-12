@@ -1,0 +1,32 @@
+# This YAML configuration is used to schedule pods on AKS Virtual Nodes using taints and tolerations.
+#Example filename: nginx-virtual-node-deployment.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-test-virtual-node
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: nginx-test-virtual-node
+  template:
+    metadata:
+      labels:
+        app: nginx-test-virtual-node
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+          resources:
+            requests:
+              cpu: 100m
+      nodeSelector:
+        kubernetes.io/role: agent
+        beta.kubernetes.io/os: linux
+        type: virtual-kubelet
+      tolerations:
+        - key: "virtual-kubelet.io/provider"
+          operator: Exists
+        - key: azure.com/aci
+          effect: NoSchedule
