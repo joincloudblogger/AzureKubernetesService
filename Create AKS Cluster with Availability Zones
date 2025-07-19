@@ -1,0 +1,42 @@
+############################################################### Create AKS Cluster with Availability Zones##############################################
+Trainer: Gaurav Tevathiya | Cloud & AI Architect
+#################################################
+
+1️⃣ create-resource-group
+
+# Create Azure Resource Group
+az group create --name hcl-ci-rg --location eastus
+
+2️⃣ create-aks-cluster
+# Create AKS Cluster with Availability Zones
+
+az aks create \
+  --resource-group hcl-ci-rg \
+  --name hclcicluster \
+  --generate-ssh-keys \
+  --vm-set-type VirtualMachineScaleSets \
+  --load-balancer-sku standard \
+  --node-count 3 \
+  --zones 1 2 3
+
+3️⃣ get-credentials.sh
+
+# Get AKS Cluster Credentials
+az aks get-credentials --resource-group hcl-ci-rg --name hclcicluster
+
+
+4️⃣ verify-nodes
+
+# Verify Node Info and Zone
+
+kubectl get nodes
+kubectl describe nodes | grep -e "Name:" -e "topology.kubernetes.io/zone"
+
+5️⃣ Create the Deployment by running the following command:
+
+kubectl apply -f https://k8s.io/examples/controllers/nginx-deployment.yaml
+
+5️⃣ verify Pod with Node
+kubectl get pod -o wide
+
+
