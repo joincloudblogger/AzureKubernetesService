@@ -18,3 +18,8 @@ spec:
       containers:
         - name: nginx
           image: nginx
+
+
+
+#####
+kubectl expose rs web --type=LoadBalancer --port=80 --name=my-first-service
